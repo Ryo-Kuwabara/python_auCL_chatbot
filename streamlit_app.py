@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
 from llama_index.llms.openai import OpenAI
 from llama_index.core.tools import QueryEngineTool, ToolMetadata  
-from llama_index.core.agent import ReActAgent
+from llama_index.core.agent import AgentRunner, FunctionCallingAgentWorker
 from llama_index.core.memory import ChatMemoryBuffer
 from llama_index.core.prompts import PromptTemplate
 
@@ -138,14 +138,16 @@ class StreamlitReActChatBot:
             # メモリ機能（軽量化）
             memory = ChatMemoryBuffer.from_defaults(token_limit=1500)
             
-            # ReActエージェント作成（0.10系対応）
-            self.agent = ReActAgent.from_tools(
-                tools=[pdf_search_tool],
+            # 新しいAPIでエージェント作成（FunctionCallingAgentWorker使用）
+            # FunctionCallingAgentWorkerでエージェント作成
+            agent_worker = FunctionCallingAgentWorker.from_tools(
+                [pdf_search_tool],
                 llm=Settings.llm,
                 verbose=True,
-                system_prompt=REACT_SYSTEM_PROMPT,
-                max_function_calls=5
+                system_prompt=REACT_SYSTEM_PROMPT
             )
+            
+            self.agent = AgentRunner(agent_worker)
             
             st.success("✅ ReActエージェント準備完了")
             return True
