@@ -1,19 +1,18 @@
-# Core Streamlit application
-streamlit
+# Streamlit Cloud compatible versions
+streamlit>=1.28,<2.0
 
-# LlamaIndex - Core libraries (let pip resolve compatible versions)
-llama-index
-llama-index-llms-openai
-llama-index-agent-openai
+# LlamaIndex - Use stable 0.10.x series
+llama-index>=0.10.0,<0.11.0
 
-# OpenAI API
-openai
+# OpenAI SDK - Compatible with newer llama-index
+openai>=1.0,<2.0
+
+# Core dependencies - Safe ranges
+tenacity>=8.2,<9.0
+numpy>=1.24,<2.0
 
 # Environment variables
 python-dotenv
-
-# Standard libraries (usually included with Python)
-# os, re are built-in, no need to specify
 llama-parse==0.6.54
 markdown-it-py==4.0.0
 MarkupSafe==3.0.3

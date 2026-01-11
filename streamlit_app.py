@@ -9,9 +9,8 @@ import re
 from dotenv import load_dotenv
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
 from llama_index.llms.openai import OpenAI
-from llama_index.core.tools import QueryEngineTool, ToolMetadata
-from llama_index.core.agent import AgentRunner
-from llama_index.agent.openai import OpenAIAgent
+from llama_index.core.tools import QueryEngineTool, ToolMetadata  
+from llama_index.core.agent import ReActAgent
 from llama_index.core.memory import ChatMemoryBuffer
 from llama_index.core.prompts import PromptTemplate
 
@@ -139,8 +138,8 @@ class StreamlitReActChatBot:
             # メモリ機能（軽量化）
             memory = ChatMemoryBuffer.from_defaults(token_limit=1500)
             
-            # OpenAIAgentを使用（新しいAPI）
-            self.agent = OpenAIAgent.from_tools(
+            # ReActエージェント作成（0.10系対応）
+            self.agent = ReActAgent.from_tools(
                 tools=[pdf_search_tool],
                 llm=Settings.llm,
                 verbose=True,
