@@ -10,7 +10,6 @@ from dotenv import load_dotenv
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
 from llama_index.llms.openai import OpenAI
 from llama_index.core.tools import QueryEngineTool, ToolMetadata  
-from llama_index.core.agent import AgentRunner
 from llama_index.core.memory import ChatMemoryBuffer
 from llama_index.core.prompts import PromptTemplate
 
