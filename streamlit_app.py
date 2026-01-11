@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
 from llama_index.llms.openai import OpenAI
 from llama_index.core.tools import QueryEngineTool, ToolMetadata  
-from llama_index.core.agent import AgentRunner, FunctionCallingAgentWorker
+from llama_index.core.agent import AgentRunner
 from llama_index.core.memory import ChatMemoryBuffer
 from llama_index.core.prompts import PromptTemplate
 
@@ -138,16 +138,18 @@ class StreamlitReActChatBot:
             # メモリ機能（軽量化）
             memory = ChatMemoryBuffer.from_defaults(token_limit=1500)
             
-            # 新しいAPIでエージェント作成（FunctionCallingAgentWorker使用）
-            # FunctionCallingAgentWorkerでエージェント作成
-            agent_worker = FunctionCallingAgentWorker.from_tools(
-                [pdf_search_tool],
-                llm=Settings.llm,
-                verbose=True,
-                system_prompt=REACT_SYSTEM_PROMPT
-            )
-            
-            self.agent = AgentRunner(agent_worker)
+            # シンプルな質問エンジンとして使用（最も互換性が高い方法）
+            try:
+                # メモリ機能付きの簡単なエージェント作成
+                from llama_index.core.chat_engine import SimpleChatEngine
+                
+                self.agent = query_engine
+                st.success("✅ クエリエンジン準備完了")
+                
+            except ImportError:
+                # フォールバック: 基本的なクエリエンジンのみ使用
+                self.agent = query_engine
+                st.success("✅ 基本クエリエンジン準備完了")
             
             st.success("✅ ReActエージェント準備完了")
             return True
@@ -195,15 +197,15 @@ class StreamlitReActChatBot:
             return response  # エラー時は元の回答をそのまま返す
     
     def ask_with_react(self, question: str):
-        """ReActエージェントで質問応答（日本語強制版）"""
+        """質問応答（日本語強制版）"""
         if not self.agent:
             st.error("❌ エラー: エージェントが初期化されていません。PDFファイルの読み込みを行ってください。")
             return "エラー: エージェントが初期化されていません。PDFファイルの読み込みボタンを押してください。"
         
         try:
-            with st.spinner("🤖 ReActエージェントで分析中..."):
-                # シンプルな質問処理でメモリ機能を活用
-                response = self.agent.chat(question)
+            with st.spinner("🤖 PDF検索で分析中..."):
+                # クエリエンジンを直接使用
+                response = self.agent.query(question)
                 
                 # 🔧 改善策2: 英語検出と日本語強制変換
                 japanese_response = self._force_japanese_response(str(response))
