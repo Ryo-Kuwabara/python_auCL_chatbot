@@ -1,17 +1,7 @@
-# Streamlit Cloud compatible versions
-streamlit>=1.28,<2.0
-
-# LlamaIndex - Use stable 0.10.x series
-llama-index>=0.10.0,<0.11.0
-
-# OpenAI SDK - Compatible with newer llama-index
-openai>=1.0,<2.0
-
-# Core dependencies - Safe ranges
-tenacity>=8.2,<9.0
-numpy>=1.24,<2.0
-
-# Environment variables
+# Minimal requirements for Streamlit Cloud
+streamlit
+llama-index
+openai
 python-dotenv
 llama-parse==0.6.54
 markdown-it-py==4.0.0
